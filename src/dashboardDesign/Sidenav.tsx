@@ -18,7 +18,7 @@ export const SideNav = () => {
         </li>
         <li>
           <Link
-            to="orders"
+            to="Bookings"
             className="flex items-center gap-3 p-3 rounded-md hover:bg-orange-100 hover:text-orange-600 transition-colors duration-200"
           >
             <FaShop className="text-orange-500" />
@@ -36,7 +36,7 @@ export const SideNav = () => {
         </li>
         <li>
           <Link
-            to="#"
+            to="Tickets"
             className="flex items-center gap-3 p-3 rounded-md hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
           >
             <Tickets className="text-red-500" />
@@ -45,7 +45,7 @@ export const SideNav = () => {
         </li>
         <li>
           <Link
-            to="/"
+            to="/tickets"
             className="flex items-center gap-3 p-3 rounded-md hover:bg-green-100 hover:text-green-600 transition-colors duration-200"
           >
             <svg

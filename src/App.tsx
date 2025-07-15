@@ -17,13 +17,16 @@ import AdminDashboard from "./pages/AdminDashboard"
 import AdminUserProfile from "./components/adminDashboard/AdminUserProfile"
 
 import { AllUsers } from "./components/adminDashboard/AllUsers"
-import AllBookings from "./components/adminDashboard/AllBookings"
+
 import AllHotels from "./components/adminDashboard/AllHotels"
 import Hotels from "./pages/Hotels"
-import Bookings from "./components/dashboard/Bookings"
+// import Bookings from "./components/dashboard/Bookings"
 import Analytics from "./components/adminDashboard/Analytics"
 import { About } from "./pages/About"
 import { Room } from "./pages/Room"
+import AllBookings from "./components/adminDashboard/AllBookings"
+import Bookings from "./components/dashboard/Bookings"
+import Tickets from "./components/dashboard/Tickets"
 
 
 
@@ -79,8 +82,12 @@ function App() {
           element: <UserProfile />,
         },
         {
-          path: "Booking",
+          path: "Bookings",
           element: <Bookings />,
+        },
+        {
+          path: "Tickets",
+          element: <Tickets />,
         },
         {
           path: "payments",

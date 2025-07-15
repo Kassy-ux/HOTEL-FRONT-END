@@ -20,7 +20,7 @@ export const AdminSideNav = () => {
 
       <li className="my-1">
         <Link
-          to="allorders"
+          to="allhotels"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r from-blue-100 to-purple-100 transition-all"
         >
           <FaShop className="text-purple-600" />
@@ -30,7 +30,7 @@ export const AdminSideNav = () => {
 
       <li className="my-1">
         <Link
-          to="allmeals"
+          to="allbookings"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r from-blue-100 to-purple-100 transition-all"
         >
           <FaDollarSign className="text-purple-600" />

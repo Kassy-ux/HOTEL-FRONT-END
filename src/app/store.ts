@@ -6,6 +6,8 @@ import { userApi } from '../features/api/userApi';
 import { hotelApi } from '../features/api/hotelApi';
 import { Hotel } from 'lucide-react';
 import { roomApi } from '../features/api/roomApi';
+import { bookingsApi } from '../features/api/bookingsApi';
+import { TicketsApi } from '../features/api/TictetsApi';
 
 
 
@@ -26,13 +28,15 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer, 
     [hotelApi.reducerPath]:hotelApi.reducer,
     [roomApi.reducerPath]:roomApi.reducer,
+    [bookingsApi.reducerPath]:bookingsApi.reducer,
+    [TicketsApi.reducerPath]:TicketsApi.reducer,
     // Use the persisted reducer here
     auth: persistedAuthReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // To avoid serialization errors with redux-persist
-    }).concat(userApi.middleware,hotelApi.middleware,roomApi.middleware), // Include the userApi middleware
+    }).concat(userApi.middleware,hotelApi.middleware,roomApi.middleware,bookingsApi.middleware, TicketsApi.middleware), // Include the userApi middleware
 });
 
 // Export the persisted store

@@ -120,7 +120,7 @@ export const AllUsers = () => {
                     <div className="mb-4">
                       <label htmlFor="firstName" className="block text-sm font-medium text-orange-500">User Type</label>
                       <select>
-                        <option value="">Select UserType</option>
+                        <option value="">Select role</option>
                         <option value="admin">Admin</option>
                         <option value="member">Member</option>
                         <option value="disabled">Disabled</option>

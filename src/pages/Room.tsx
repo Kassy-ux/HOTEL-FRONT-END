@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { hotelApi } from "../features/api/hotelApi";
 import { PuffLoader } from "react-spinners";
-import RoomCardSection from "../components/hotels/RoomCardSection";
+import { RoomCardSection } from "../components/hotels/RoomCardSection";
 
 
-export const RoomCardPage = () => {
+export const Room= () => {
   const { hotelId } = useParams();
   const navigate = useNavigate();
 

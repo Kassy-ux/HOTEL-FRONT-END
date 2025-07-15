@@ -35,6 +35,14 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings']
     }),
 
+    deleteBooking: builder.mutation({
+      query: (bookingData) => ({
+        url: 'bookings',
+        method: 'DELETE',
+        body: bookingData,
+      }),
+      invalidatesTags: ['Bookings']
+    }),
     // Update a booking
     updateBooking: builder.mutation({
       query: ({ bookingId, ...updateData }) => ({
@@ -140,6 +148,8 @@ export const bookingsApi = createApi({
 export const {
   useGetAllBookingsQuery,
   useCreateBookingMutation,
+
+  useDeleteBookingMutation,
   useUpdateBookingMutation,
   useCancelBookingMutation,
   useConfirmBookingMutation,

@@ -3,16 +3,20 @@ import { MdStar, MdLocationOn } from "react-icons/md";
 import { hotelApi } from "../../features/api/hotelApi";
 import { PuffLoader } from "react-spinners";
 import { useState } from "react";
-// <-- Import RoomCardSection
 import type { HotelData } from "../../types/Types";
-import RoomCardSection from "./RoomCardSection";
+import { RoomCardSection } from "./RoomCardSection"; // Named export
 
 export const HotelCardSection = () => {
   const [selectedHotel, setSelectedHotel] = useState<HotelData | null>(null);
-  const { data: hotelData = [], isLoading, error } = hotelApi.useGetAllHotelsQuery({
-    refetchOnMountOrArgChange: true,
-  });
 
+  // Fetching all hotels
+  const {
+    data: hotelData = [],
+    isLoading,
+    error,
+  } = hotelApi.useGetAllHotelsQuery("all");
+
+  // If a hotel is selected, show its RoomCardSection
   if (selectedHotel) {
     return (
       <RoomCardSection
@@ -39,7 +43,9 @@ export const HotelCardSection = () => {
             <PuffLoader color="#3b82f6" size={60} />
           </div>
         ) : hotelData.length === 0 ? (
-          <div className="text-center text-gray-600">No hotels available at the moment.</div>
+          <div className="text-center text-gray-600">
+            No hotels available at the moment.
+          </div>
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {hotelData.map((hotel: HotelData) => (
@@ -47,28 +53,37 @@ export const HotelCardSection = () => {
                 key={hotel.hotelId}
                 className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow hover:shadow-lg transition"
               >
+                {/* Hotel Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src={hotel.hotelImage || "https://source.unsplash.com/random/600x400/?hotel"}
+                    src={
+                      hotel.hotelImage ||
+                      "https://source.unsplash.com/random/600x400/?hotel"
+                    }
                     alt={hotel.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                  {/* Overlay Info */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <h3 className="text-white text-xl font-semibold">{hotel.name}</h3>
+                    <h3 className="text-white text-xl font-semibold">
+                      {hotel.name}
+                    </h3>
                     <p className="text-white text-sm flex items-center">
                       <MdLocationOn className="mr-1" />
                       {hotel.location}
                     </p>
                   </div>
+                  {/* Rating Badge */}
                   <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded-full flex items-center gap-1 text-sm shadow">
                     <MdStar className="text-amber-500" />
-                    <span>{hotel.rating}</span>
+                    <span>{hotel.rating ?? "N/A"}</span>
                   </div>
                 </div>
 
+                {/* Hotel Card Footer */}
                 <div className="p-4">
                   <p className="text-sm text-gray-500 mb-2">
-                    {hotel.rooms.length} room type(s) available
+                    {hotel.rooms?.length || 0} room type(s) available
                   </p>
                   <button
                     onClick={() => setSelectedHotel(hotel)}
