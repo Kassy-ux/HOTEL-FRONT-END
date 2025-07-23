@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../../app/store';
+import type { Ticket } from '../../types/Types';
 
 export const TicketsApi = createApi({
   reducerPath: 'supportTicketsApi',
@@ -17,9 +18,9 @@ export const TicketsApi = createApi({
   tagTypes: ['Tickets', 'Ticket'],
   endpoints: (builder) => ({
     // Get all support tickets (admin only)
-    getAllTickets: builder.query({
-      query: () => '',
-      providesTags: ['Tickets']
+    getAllTickets: builder.query<Ticket[], void>({ // <--- void means no argument expected
+      query: () => '/tickets',
+      providesTags: ['Tickets'],
     }),
 
     // Create a new support ticket

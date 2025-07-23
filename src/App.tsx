@@ -8,7 +8,7 @@ import { Login } from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import UserProfile from "./components/dashboard/UserProfile"
 
-import { MyPayments } from "./components/dashboard/MyPayments"
+
 
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminDashboard from "./pages/AdminDashboard"
@@ -18,7 +18,7 @@ import AdminUserProfile from "./components/adminDashboard/AdminUserProfile"
 
 import { AllUsers } from "./components/adminDashboard/AllUsers"
 
-import AllHotels from "./components/adminDashboard/AllHotels"
+
 import Hotels from "./pages/Hotels"
 // import Bookings from "./components/dashboard/Bookings"
 import Analytics from "./components/adminDashboard/Analytics"
@@ -27,6 +27,10 @@ import { Room } from "./pages/Room"
 import AllBookings from "./components/adminDashboard/AllBookings"
 import Bookings from "./components/dashboard/Bookings"
 import Tickets from "./components/dashboard/Tickets"
+import MyPayments from "./components/dashboard/MyPayments"
+import { AllHotels } from "./components/adminDashboard/AllHotels"
+import AllTickets from "./components/adminDashboard/AllTickets"
+
 
 
 
@@ -91,7 +95,7 @@ function App() {
         },
         {
           path: "payments",
-          element: <MyPayments />,
+          element: <MyPayments  />,
         },
       ]
     },
@@ -105,7 +109,7 @@ function App() {
       errorElement: <Error />,
       children: [
         {
-          path: "analytics",
+          path: "Analytics",
           element: <Analytics />,
         },
         {
@@ -124,6 +128,10 @@ function App() {
           path: "adminprofile",
           element: <AdminUserProfile />,
         },
+        {
+          path: "AllTickets",
+          element :<AllTickets/>
+        }
         
         
       ]

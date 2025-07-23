@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Loader2, AlertCircle, CalendarCheck, History, Repeat, Hotel, MapPin, Clock, Check, X, ArrowRight, Bed, Users, Wifi, Tv, AirVent } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { useGetBookingsByUserQuery } from '../../features/api/bookingsApi';
+import { useGetBookingsByUserQuery ,useLazyGetAvailableRoomsQuery,useCancelBookingMutation,useChangeRoomMutation} from '../../features/api/bookingsApi';
 import type { RootState } from '../../app/store';
+import Swal from 'sweetalert2';
+import StripeCheckoutButton from './StripeCheckoutButton';
+
+
 
 interface BookingDetails {
   bookingId: number;
@@ -11,7 +15,7 @@ interface BookingDetails {
   checkInDate: string;
   checkOutDate: string;
   totalAmount: string;
-  bookingStatus: "Pending" | "Confirmed" | "Cancelled" | "Completed" | "CheckedIn";
+  bookingStatus: "Pending" | "Confirmed" | "Cancelled";
   room: {
     roomId: number;
     hotelId: number;
@@ -110,43 +114,78 @@ export const Bookings = () => {
     alert(`Rebooking initiated for ${booking.room.hotel.name}`);
   };
 
-  const handleCancelBooking = (bookingId: number) => {
-    console.log('Cancelling booking:', bookingId);
-    alert(`Booking #${bookingId} cancellation requested.`);
-    refetch();
-  };
+  const [cancelBooking] = useCancelBookingMutation();
 
-  const handleChangeRoom = (booking: BookingDetails) => {
-    setSelectedBooking(booking);
-    setShowChangeRoom(true);
-    const mockRooms = [
-      {
-        roomId: 6,
-        roomType: "Deluxe Suite",
-        pricePerNight: "350.00",
-        capacity: 3,
-        amenities: "WiFi, Air Conditioning, TV, Balcony, Mini Bar",
-        roomImage: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG90ZWwlMjByb29tfGVufDB8fDB8fHww"
-      },
-      {
-        roomId: 7,
-        roomType: "Executive Room",
-        pricePerNight: "275.00",
-        capacity: 2,
-        amenities: "WiFi, Air Conditioning, TV, Work Desk",
-        roomImage: "https://images.unsplash.com/photo-1566669437685-2c5a585aded0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWwlMjByb29tfGVufDB8fDB8fHww"
+  const handleCancelBooking = async (bookingId: number) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This booking will be cancelled.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e53e3e',
+      cancelButtonColor: '#718096',
+      confirmButtonText: 'Yes, cancel it!',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await cancelBooking(bookingId).unwrap();
+        await Swal.fire('Cancelled!', 'Your booking has been cancelled.', 'success');
+        refetch();
+      } catch (err) {
+        Swal.fire('Error', 'Failed to cancel booking. Try again later.', 'error');
       }
-    ];
-    setAvailableRooms(mockRooms);
+    }
   };
+  
+  const [triggerGetRooms] = useLazyGetAvailableRoomsQuery();
 
-  const confirmRoomChange = (newRoom: any) => {
-    console.log(`Changing from room ${selectedBooking?.room.roomId} to ${newRoom.roomId}`);
-    alert(`Room changed to ${newRoom.roomType}`);
-    setShowChangeRoom(false);
-    setSelectedBooking(null);
-    refetch();
-  };
+const handleChangeRoom = async (booking: BookingDetails) => {
+  setSelectedBooking(booking);
+  setShowChangeRoom(true);
+
+  try {
+    const res = await triggerGetRooms({
+      checkInDate: booking.checkInDate,
+      checkOutDate: booking.checkOutDate,
+      hotelId: booking.room.hotelId,
+    }).unwrap();
+    setAvailableRooms(res);
+  } catch (e) {
+    Swal.fire('Error', 'Could not load available rooms.', 'error');
+  }
+};
+
+
+const [changeRoom] = useChangeRoomMutation();
+
+const confirmRoomChange = async (newRoom: any) => {
+  const result = await Swal.fire({
+    title: 'Change Room?',
+    html: `You are changing from <b>${selectedBooking?.room.roomType}</b> to <b>${newRoom.roomType}</b>.`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, change it!',
+    cancelButtonText: 'No, keep current room',
+  });
+
+  if (result.isConfirmed && selectedBooking) {
+    try {
+      await changeRoom({
+        bookingId: selectedBooking.bookingId,
+        newRoomId: newRoom.roomId,
+      }).unwrap();
+
+      Swal.fire('Success!', 'Your room has been changed.', 'success');
+      setShowChangeRoom(false);
+      setSelectedBooking(null);
+      refetch();
+    } catch (err) {
+      Swal.fire('Error', 'Failed to change room. Try again.', 'error');
+    }
+  }
+};
+
 
   const renderAmenityIcon = (amenity: string) => {
     switch (amenity.toLowerCase()) {
@@ -236,6 +275,8 @@ export const Bookings = () => {
                 >
                   <X size={14} /> Cancel
                 </button>
+                <StripeCheckoutButton  bookingId={booking.bookingId} amount={parseFloat(booking.totalAmount) * 100} />
+
               </>
             )}
             {!isUpcoming && (

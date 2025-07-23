@@ -1,163 +1,151 @@
-import React from 'react';
-import { Loader2, AlertCircle } from 'lucide-react';
 import { useSelector } from 'react-redux';
-
-// Assuming these paths are correct for your project structure
 import { useGetAllBookingsQuery } from '../../features/api/bookingsApi';
+import { Loader2, AlertCircle, Check, X } from 'lucide-react';
 import type { RootState } from '../../app/store';
 
-// Define the BookingDetails interface directly for clarity within this component
-// In a real project, this would likely be imported from a shared types file.
-export interface BookingDetails {
+interface BookingDetails {
   bookingId: number;
-  hotel: {
-    hotelId: number;
-    name: string;
-    location: string;
-    imageUrl: string;
-  };
-  room: {
-    roomId: number;
-    roomType: string;
-    pricePerNight: number;
-  };
-  user: {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  userId: number;
+  roomId: number;
   checkInDate: string;
   checkOutDate: string;
-  totalAmount: number;
-  bookingStatus: "Pending" | "Confirmed" | "Cancelled" | "Completed" | "CheckedIn";
-  createdAt: string;
+  totalAmount: string;
+  bookingStatus: 'Pending' | 'Confirmed' | 'Cancelled';
+  room: {
+    roomId: number;
+    hotelId: number;
+    roomType: string;
+    pricePerNight: string;
+    capacity: number;
+    amenities: string;
+    roomImage: string;
+    hotel: {
+      name: string;
+      location: string;
+      address: string;
+      category: string;
+      rating: string;
+    };
+  };
 }
 
+const formatDate = (dateString: string) => {
+  try {
+    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Invalid date' : date.toLocaleDateString('en-US', options);
+  } catch {
+    return 'Invalid date';
+  }
+};
+
+const formatAmount = (amount: string) => {
+  try {
+    const num = parseFloat(amount);
+    return isNaN(num) ? '$0.00' : `$${num.toFixed(2)}`;
+  } catch {
+    return '$0.00';
+  }
+};
+
 export const AllBookings = () => {
-  // Get authentication status from Redux store to conditionally fetch bookings
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  // Fetch all bookings using the RTK Query hook
-  // 'allBookings' is typed as an array of BookingDetails and defaults to an empty array
-  // 'skip' ensures the query only runs if the user is authenticated
   const {
-    data: allBookings = [],
-    isLoading, // Combines loading states for simplicity
+    data: bookings = [],
+    isLoading,
     error,
+    refetch,
   } = useGetAllBookingsQuery(undefined, {
     skip: !isAuthenticated,
   });
 
-  return (
-    <>
-      {/* Page title with Tailwind CSS for styling */}
-      <div className="text-2xl font-bold text-center mb-6 text-orange-600">All Bookings Overview</div>
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-purple-600 mr-2" size={24} />
+        <span className="text-lg text-purple-900">Loading all bookings...</span>
+      </div>
+    );
+  }
 
-      {/* Responsive table container with modern styling */}
-      <div className="overflow-x-auto p-4 bg-white shadow-xl rounded-lg border border-gray-200 mx-auto max-w-7xl">
-        {/* Table structure with compact JSX to avoid whitespace text node errors */}
-        <table className="table w-full min-w-max border-collapse">
-          <thead>
-            <tr className="bg-orange-50 text-orange-800 uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left font-semibold">#</th>
-              <th className="py-3 px-6 text-left font-semibold">Room & Hotel</th>
-              <th className="py-3 px-6 text-left font-semibold">Guest Info</th>
-              <th className="py-3 px-6 text-left font-semibold">Dates</th>
-              <th className="py-3 px-6 text-left font-semibold">Amount</th>
-              <th className="py-3 px-6 text-left font-semibold">Status</th>
-            </tr>
-          </thead>
-          {/* Ensure no whitespace between <tbody> and its direct <tr> children */}
-          <tbody>{error ? (
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="mx-auto text-pink-600 mb-3" size={32} />
+        <h3 className="text-xl font-medium text-purple-900 mb-2">Error loading bookings</h3>
+        <p className="text-purple-700 max-w-md mx-auto">Something went wrong. Please try again.</p>
+        <button
+          onClick={() => refetch()}
+          className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors shadow-md"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+          All Bookings
+        </h1>
+        <div className="w-20 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
+      </div>
+
+      {bookings.length === 0 ? (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 text-center shadow-sm border border-purple-100">
+          <p className="text-purple-800 text-lg">No bookings found.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-xl shadow-lg border border-purple-100">
+          <table className="min-w-full bg-white">
+            <thead className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold">
               <tr>
-                <td colSpan={6} className="text-center text-red-600 py-6">
-                  <div className="flex items-center justify-center space-x-2">
-                    <AlertCircle className="inline-block text-red-500" size={24} />
-                    <span className="text-lg font-medium">Error fetching bookings. Please try again.</span>
-                  </div>
-                </td>
+                <th className="p-4 text-left rounded-tl-xl">Booking ID</th>
+                <th className="p-4 text-left">User ID</th>
+                <th className="p-4 text-left">Hotel</th>
+                <th className="p-4 text-left">Room</th>
+                <th className="p-4 text-left">Check-in</th>
+                <th className="p-4 text-left">Check-out</th>
+                <th className="p-4 text-left">Amount</th>
+                <th className="p-4 text-left rounded-tr-xl">Status</th>
               </tr>
-            ) : isLoading ? (
-              <tr>
-                <td colSpan={6} className="text-center py-6">
-                  <div className="flex items-center justify-center space-x-2 text-gray-500">
-                    <Loader2 className="animate-spin inline-block text-orange-500" size={28} />
-                    <span className="text-lg font-medium">Loading bookings...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : allBookings.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="text-center text-gray-600 py-6">
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <AlertCircle className="mx-auto text-gray-400" size={32} />
-                    <span className="text-lg font-medium">No bookings found.</span>
-                    <p className="text-sm text-gray-500">It looks like there are no bookings to display at the moment.</p>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              // Map through the fetched bookings and render each row
-              allBookings.map((booking: BookingDetails, idx: number) => (
-                <tr key={booking.bookingId} className="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200">
-                  <th className="py-4 px-6 text-left text-gray-700">{idx + 1}</th>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle h-14 w-14 overflow-hidden rounded-lg shadow-sm">
-                          <img
-                            // Display hotel image or a placeholder if not available/fails to load
-                            src={booking.hotel?.imageUrl || `https://placehold.co/56x56/f0f0f0/333333?text=${booking.room?.roomType[0] || 'R'}`}
-                            alt={`${booking.hotel?.name || 'Hotel'} Image`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              // Fallback to a generic placeholder on image load error
-                              e.currentTarget.src = `https://placehold.co/56x56/f0f0f0/333333?text=${booking.room?.roomType[0] || 'R'}`;
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold text-orange-600">{booking.room?.roomType || 'Unknown Room'}</div>
-                        <div className="text-sm text-gray-600">{booking.hotel?.name || 'Unknown Hotel'}</div>
-                        <div className="text-xs text-gray-500">{booking.hotel?.location || 'Unknown Location'}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="text-sm text-gray-800 font-medium">{booking.user?.firstName} {booking.user?.lastName}</div>
-                    <div className="text-xs text-gray-500">{booking.user?.email}</div>
-                  </td>
-                  <td className="py-4 px-6 text-gray-700 text-sm">
-                    <div>Check-in: <span className="font-medium">{booking.checkInDate}</span></div>
-                    <div>Check-out: <span className="font-medium">{booking.checkOutDate}</span></div>
-                  </td>
-                  <td className="py-4 px-6 text-orange-700 font-bold text-lg">KES {booking.totalAmount.toFixed(2)}</td>
-                  <td className="py-4 px-6">
-                    {/* Dynamic badge styling based on booking status */}
-                    <span className={`badge text-xs px-3 py-1 rounded-full font-semibold
-                      ${booking.bookingStatus === 'Confirmed'
-                        ? 'bg-green-100 text-green-700 border border-green-400'
-                        : booking.bookingStatus === 'Pending'
-                        ? 'bg-yellow-100 text-yellow-700 border border-yellow-400'
-                        : booking.bookingStatus === 'Cancelled'
-                        ? 'bg-red-100 text-red-700 border border-red-400'
-                        : booking.bookingStatus === 'Completed'
-                        ? 'bg-blue-100 text-blue-700 border border-blue-400'
-                        : booking.bookingStatus === 'CheckedIn'
-                        ? 'bg-purple-100 text-purple-700 border border-purple-400'
-                        : 'bg-gray-100 text-gray-700 border border-gray-400' // Default for unknown status
+            </thead>
+            <tbody className="text-sm text-purple-900 divide-y divide-purple-100">
+              {(bookings as BookingDetails[]).map((booking) => (
+                <tr 
+                  key={booking.bookingId} 
+                  className="hover:bg-purple-50 transition duration-150 ease-in-out"
+                >
+                  <td className="p-4 font-medium">{booking.bookingId}</td>
+                  <td className="p-4">{booking.userId}</td>
+                  <td className="p-4">{booking.room.hotel.name}</td>
+                  <td className="p-4">{booking.room.roomType}</td>
+                  <td className="p-4">{formatDate(booking.checkInDate)}</td>
+                  <td className="p-4">{formatDate(booking.checkOutDate)}</td>
+                  <td className="p-4 font-medium">{formatAmount(booking.totalAmount)}</td>
+                  <td className="p-4">
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                      ${booking.bookingStatus === 'Confirmed' ? 
+                        'bg-green-100 text-green-800' :
+                        booking.bookingStatus === 'Pending' ? 
+                        'bg-yellow-100 text-yellow-800' :
+                        'bg-pink-100 text-pink-800'
                       }`}>
+                      {booking.bookingStatus === 'Confirmed' && <Check size={12} className="mr-1" />}
+                      {booking.bookingStatus === 'Cancelled' && <X size={12} className="mr-1" />}
                       {booking.bookingStatus}
                     </span>
                   </td>
                 </tr>
-              ))
-            )}</tbody>
-        </table>
-      </div>
-    </>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 };
 

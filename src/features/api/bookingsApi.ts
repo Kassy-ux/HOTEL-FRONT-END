@@ -19,13 +19,11 @@ export const bookingsApi = createApi({
   
   tagTypes: ['Bookings', 'Booking'],
   endpoints: (builder) => ({
-    // Get all bookings (admin only)
     getAllBookings: builder.query({
       query: () => 'bookings',
       providesTags: ['Bookings']
     }),
 
-    // Create a new booking
     createBooking: builder.mutation({
       query: (bookingData) => ({
         url: 'bookings',
@@ -43,7 +41,7 @@ export const bookingsApi = createApi({
       }),
       invalidatesTags: ['Bookings']
     }),
-    // Update a booking
+
     updateBooking: builder.mutation({
       query: ({ bookingId, ...updateData }) => ({
         url: `bookings/${bookingId}`,
@@ -53,7 +51,6 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings', 'Booking']
     }),
 
-    // Cancel a booking
     cancelBooking: builder.mutation({
       query: (bookingId) => ({
         url: `bookings/${bookingId}/cancel`,
@@ -62,7 +59,6 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings', 'Booking']
     }),
 
-    // Confirm a booking
     confirmBooking: builder.mutation({
       query: (bookingId) => ({
         url: `bookings/${bookingId}/confirm`,
@@ -71,7 +67,20 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings', 'Booking']
     }),
 
-    // Check room availability
+    getAvailableRooms: builder.query<any[], { checkInDate: string, checkOutDate: string, hotelId: number }>({
+      query: ({ checkInDate, checkOutDate, hotelId }) =>
+        `/rooms/available?checkIn=${checkInDate}&checkOut=${checkOutDate}&hotelId=${hotelId}`,
+    }),
+
+    changeRoom: builder.mutation<void, { bookingId: number, newRoomId: number }>({
+      query: ({ bookingId, newRoomId }) => ({
+        url: `/bookings/${bookingId}/change-room`,
+        method: 'PATCH',
+        body: { newRoomId },
+      }),
+      invalidatesTags: ['Bookings'],
+    }),
+
     checkRoomAvailability: builder.query({
       query: ({ roomId, checkInDate, checkOutDate }) => ({
         url: 'bookings/room-availability',
@@ -79,7 +88,6 @@ export const bookingsApi = createApi({
       })
     }),
 
-    // Search bookings by date strings
     searchBookingsByDate: builder.query({
       query: ({ startDate, endDate }) => ({
         url: 'bookings/search-date',
@@ -88,25 +96,21 @@ export const bookingsApi = createApi({
       providesTags: ['Bookings']
     }),
 
-    // Get bookings by user
     getBookingsByUser: builder.query({
       query: (userId) => `bookings/user/${userId}`,
       providesTags: ['Bookings']
     }),
 
-    // Get bookings by room
     getBookingsByRoom: builder.query({
       query: (roomId) => `bookings/room/${roomId}`,
       providesTags: ['Bookings']
     }),
 
-    // Get bookings by status
     getBookingsByStatus: builder.query({
       query: (status) => `bookings/status/${status}`,
       providesTags: ['Bookings']
     }),
 
-    // Check-in operation
     checkIn: builder.mutation({
       query: (bookingId) => ({
         url: `bookings/${bookingId}/checkin`,
@@ -115,13 +119,11 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings', 'Booking']
     }),
 
-    // Get booking history
     getBookingHistory: builder.query({
       query: (userId) => `bookings/history/${userId}`,
       providesTags: ['Bookings']
     }),
 
-    // Check-out operation
     checkOut: builder.mutation({
       query: (bookingId) => ({
         url: `bookings/${bookingId}/checkout`,
@@ -130,13 +132,11 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings', 'Booking']
     }),
 
-    // Get booking statistics
     getBookingStats: builder.query({
       query: () => 'bookings/stats',
       providesTags: ['Bookings']
     }),
 
-    // Get booking details
     getBookingDetails: builder.query({
       query: (bookingId) => `bookings/${bookingId}/details`,
       providesTags: ['Booking']
@@ -144,15 +144,17 @@ export const bookingsApi = createApi({
   }),
 });
 
-// Export hooks for usage in functional components
+// ✅ Export all hooks — including lazy version
 export const {
   useGetAllBookingsQuery,
   useCreateBookingMutation,
-
   useDeleteBookingMutation,
   useUpdateBookingMutation,
   useCancelBookingMutation,
   useConfirmBookingMutation,
+  useGetAvailableRoomsQuery,
+  useLazyGetAvailableRoomsQuery,
+  useChangeRoomMutation,
   useCheckRoomAvailabilityQuery,
   useSearchBookingsByDateQuery,
   useGetBookingsByUserQuery,

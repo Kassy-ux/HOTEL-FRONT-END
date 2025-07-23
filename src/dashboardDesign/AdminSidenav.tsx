@@ -1,4 +1,4 @@
-import { SquareUserRound, LogOut, TrendingUpIcon } from "lucide-react";
+import { SquareUserRound, LogOut, TrendingUpIcon, Tickets } from "lucide-react";
 import { FaDollarSign, FaUsers } from "react-icons/fa";
 import { FaShop } from "react-icons/fa6";
 import { Link } from "react-router-dom";
@@ -60,11 +60,11 @@ export const AdminSideNav = () => {
 
       <li className="my-1">
         <Link
-          to="#"
+          to="AllTickets"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r from-red-100 to-red-200 transition-all"
         >
-          <LogOut className="text-red-500" />
-          Settings
+          <Tickets className="text-red-500" />
+          AllTickets
         </Link>
       </li>
 
