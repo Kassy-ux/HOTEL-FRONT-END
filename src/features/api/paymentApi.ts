@@ -34,6 +34,10 @@ export const paymentApi = createApi({
       providesTags: ["Payments"],
     }),
 
+
+
+    
+
     // Create Stripe Checkout session for a room booking
     createPaymentSession: builder.mutation({
       query: ({ amount, bookingId }: { amount: number; bookingId: number }) => ({

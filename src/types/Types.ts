@@ -64,4 +64,17 @@ export interface NewTicketData {
   description: string;
 }
 
-  
+export interface Payment {
+  paymentId: number;
+  paymentDate: string;
+  amount: number;
+  paymentStatus: 'Completed' | 'Pending' | 'Failed';
+  paymentMethod: string;
+  transactionId: string;
+}
+
+export interface Booking {
+  bookingId: number;
+  payments: Payment[];
+}
+

@@ -3,7 +3,7 @@ import type { RootState } from '../../app/store';
 
 export const bookingsApi = createApi({
   reducerPath: 'bookingsApi',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5000/api/',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
@@ -16,7 +16,7 @@ export const bookingsApi = createApi({
   }),
   refetchOnReconnect: true,
   refetchOnMountOrArgChange: true,
-  
+
   tagTypes: ['Bookings', 'Booking'],
   endpoints: (builder) => ({
     getAllBookings: builder.query({
@@ -33,14 +33,14 @@ export const bookingsApi = createApi({
       invalidatesTags: ['Bookings']
     }),
 
-    deleteBooking: builder.mutation({
-      query: (bookingData) => ({
-        url: 'bookings',
+    deleteBooking: builder.mutation<void, number>({
+      query: (bookingId) => ({
+        url: `/bookings/${bookingId}`, // 👈 Pass booking ID in the URL
         method: 'DELETE',
-        body: bookingData,
       }),
-      invalidatesTags: ['Bookings']
+      invalidatesTags: ['Bookings', 'Booking']
     }),
+    
 
     updateBooking: builder.mutation({
       query: ({ bookingId, ...updateData }) => ({

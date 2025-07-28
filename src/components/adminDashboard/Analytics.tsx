@@ -10,10 +10,6 @@ import {
   Bar,
 } from 'recharts';
 import { Loader2, TrendingUp, DollarSign, Users, Calendar, Hotel, Activity } from 'lucide-react';
-import { Card } from '../ui/Card';
-import { CardHeader } from '../ui/CardHeader';
-import { CardTitle } from '../ui/CardTitle';
-import { CardContent } from '../ui/CardContent';
 
 interface Payment {
   paymentId: number;
