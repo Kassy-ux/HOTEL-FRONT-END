@@ -5,7 +5,7 @@ import type { Ticket } from '../../types/Types';
 export const TicketsApi = createApi({
   reducerPath: 'supportTicketsApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:5000/api/tickets',
+    baseUrl: 'https://stayluxe-e76y.onrender.com/api/tickets',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -36,7 +36,7 @@ export const TicketsApi = createApi({
     // Get ticket by ID
     getTicketById: builder.query({
       query: (ticketId) => `/${ticketId}`,
-      providesTags: (result, error, id) => [{ type: 'Ticket', id }]
+      providesTags: (id) => [{ type: 'Ticket', id }]
     }),
 
     // Update a ticket

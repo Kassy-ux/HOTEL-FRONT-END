@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { FaCamera, FaEdit, FaTimes } from 'react-icons/fa';
 import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import type { RootState } from '../../app/store';
 import { SaveIcon } from 'lucide-react';
@@ -18,8 +18,8 @@ interface FormValues {
 
 const AdminUserProfile = () => {
   
-  const navigate = useNavigate();
-  const { user, isAuthenticated, role } = useSelector((state: RootState) => state.auth);
+
+  const { user,  } = useSelector((state: RootState) => state.auth);
   const profilePicture = user?.profile_picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName)}&background=4ade80&color=fff&size=128`;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -27,13 +27,7 @@ const AdminUserProfile = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate('/login');
-  //   } else if (userType !== 'admin') {
-  //     navigate('/login');
-  //   }
-  // }, [isAuthenticated, userType, navigate]);
+
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
@@ -41,8 +35,6 @@ const AdminUserProfile = () => {
     console.log(data)
 
   };
-  const cloud_nama = "";
-  const Press_key = "";
 
   
 

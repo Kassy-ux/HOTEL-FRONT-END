@@ -6,7 +6,7 @@ import { userApi } from "../features/api/userApi";
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from "sonner";
 import { FaUserPlus, FaPhone, FaHome, FaLock, FaEnvelope, FaSignInAlt } from "react-icons/fa";
-import { MdPassword } from "react-icons/md";
+
 import { motion } from "framer-motion";
 
 type UserRegisterFormValues = {
@@ -30,7 +30,9 @@ export const Register = () => {
       toast.success("Account created successfully!", { 
         id: loadingToastId,
         description: "You can now log in to your account"
+      
       });
+      console.log(res)
       navigate('/login', { 
         state: { email: data.email, password: data.password }, 
         replace: true 

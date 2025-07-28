@@ -4,7 +4,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import authReducer from "../features/auth/authSlice"
 import { userApi } from '../features/api/userApi';
 import { hotelApi } from '../features/api/hotelApi';
-import { Hotel } from 'lucide-react';
+
 import { roomApi } from '../features/api/roomApi';
 import { bookingsApi } from '../features/api/bookingsApi';
 import { TicketsApi } from '../features/api/TictetsApi';

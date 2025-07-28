@@ -4,7 +4,7 @@ import type { RootState } from '../../app/store';
 export const hotelApi = createApi({
   reducerPath: 'hotelApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:5000/api/',
+    baseUrl: 'https://stayluxe-e76y.onrender.com/api/',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {

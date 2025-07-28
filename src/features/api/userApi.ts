@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://stayluxe-e76y.onrender.com/api/' }),
   tagTypes: ['users', 'user'],
   endpoints: (builder) => ({
     loginUser: builder.mutation({

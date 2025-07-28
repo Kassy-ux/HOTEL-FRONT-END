@@ -1,4 +1,4 @@
-import { SquareUserRound, LogOut, TrendingUpIcon, Tickets } from "lucide-react";
+import { SquareUserRound, TrendingUpIcon, Tickets } from "lucide-react";
 import { FaDollarSign, FaUsers } from "react-icons/fa";
 import { FaShop } from "react-icons/fa6";
 import { Link } from "react-router-dom";

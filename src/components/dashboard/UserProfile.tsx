@@ -48,13 +48,15 @@ const UserProfile = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const response = await updateUserProfile({ userId: user?.userId, ...data }).unwrap();
+      const res = await updateUserProfile({ userId: user?.userId, ...data }).unwrap();
       Swal.fire("Success", "Profile updated successfully", "success");
       handleModalToggle();
+      console.log(res)
     } catch (error: any) {
       Swal.fire("Error", error?.data?.message || "Failed to update profile", "error");
     }
   };
+
 
   return (
     <div className="min-h-screen text-white py-10 px-5 bg-gradient-to-r from-black via-gray-900 to-black">

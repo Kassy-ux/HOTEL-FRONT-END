@@ -9,7 +9,7 @@ interface MyPaymentProps {
   className?: string;  // Add this line
 }
 
-const StripeCheckoutButton: React.FC<MyPaymentProps> = ({ bookingId, amount ,className }) => {
+const StripeCheckoutButton: React.FC<MyPaymentProps> = ({ bookingId, amount  }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

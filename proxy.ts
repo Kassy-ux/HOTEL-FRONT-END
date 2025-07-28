@@ -1,0 +1,1 @@
+export const apiDomain = "https://stayluxe-e76y.onrender.com/api/"
