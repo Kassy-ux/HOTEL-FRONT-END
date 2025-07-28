@@ -6,12 +6,23 @@ import { useCreateRoomMutation } from "../../features/api/roomApi";
 import type { HotelData } from "../../types/Types";
 import { RoomCardSection } from "../hotels/RoomCardSection";
 import Swal from "sweetalert2";
+import axios from "axios";
+
+
+
+
 
 export const AllHotels = () => {
+
+
+  const preset_key ="stayluxe"
+  const cloud_name ="dzddrmfs3"
   const [selectedHotel, setSelectedHotel] = useState<HotelData | null>(null);
   const [showAddHotelForm, setShowAddHotelForm] = useState(false);
   const [showAddRoomForm, setShowAddRoomForm] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploading, setUploading] = useState(false);
 
   const {
     data: hotelData = [],
@@ -72,6 +83,42 @@ export const AllHotels = () => {
     }
   };
 
+
+
+  const uploadToCloudinary = async (file: File) => {
+    const cloudFormData = new FormData();
+    cloudFormData.append("file", file);
+    cloudFormData.append("upload_preset", preset_key);
+    try {
+      setUploading(true);
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        cloudFormData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+            setUploadProgress(percent);
+          },
+        }
+      );
+      setUploading(false);
+      return response.data.secure_url;
+    } catch (error) {
+      setUploading(false);
+      console.error("Cloudinary upload failed", error);
+      Swal.fire("Upload Failed", "Failed to upload image to Cloudinary", "error");
+      return null;
+    }
+  };
+  const handleHotelImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const uploadedUrl = await uploadToCloudinary(file);
+    if (uploadedUrl) {
+      setNewHotel((prev) => ({ ...prev, hotelImage: uploadedUrl }));
+    }
+  };
+
   const handleAddRoom = async (e: React.FormEvent, hotelId: number) => {
     e.preventDefault();
     try {
@@ -113,6 +160,84 @@ export const AllHotels = () => {
   if (selectedHotel) {
     return <RoomCardSection hotel={selectedHotel} onBack={() => setSelectedHotel(null)} />;
   }
+  const hotelForm = (
+    <form
+      onSubmit={handleAddHotel}
+      className="bg-white p-6 rounded-2xl mb-8 shadow-lg border border-purple-100/50"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-purple-700 mb-1">Hotel Name</label>
+          <input
+            type="text"
+            className="w-full px-4 py-2 border rounded-lg"
+            value={newHotel.name}
+            onChange={(e) => setNewHotel({ ...newHotel, name: e.target.value })}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-purple-700 mb-1">Location</label>
+          <input
+            type="text"
+            className="w-full px-4 py-2 border rounded-lg"
+            value={newHotel.location}
+            onChange={(e) => setNewHotel({ ...newHotel, location: e.target.value })}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-purple-700 mb-1">Rating</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            step="0.1"
+            className="w-full px-4 py-2 border rounded-lg"
+            value={newHotel.rating}
+            onChange={(e) => setNewHotel({ ...newHotel, rating: e.target.value })}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-purple-700 mb-1">Hotel Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            className="w-full px-4 py-2 border rounded-lg bg-white"
+            onChange={handleHotelImageUpload}
+            required
+          />
+          {uploading && (
+            <div className="mt-2 text-xs text-purple-600">
+              Uploading: {uploadProgress}%
+              <div className="w-full bg-purple-100 h-2 mt-1 rounded">
+                <div
+                  className="h-2 bg-purple-500 rounded"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+          {newHotel.hotelImage && (
+            <img
+              src={newHotel.hotelImage}
+              alt="Uploaded Hotel"
+              className="mt-3 w-32 h-20 object-cover rounded"
+            />
+          )}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={uploading}
+        className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg"
+      >
+        Create Hotel
+      </button>
+    </form>
+  );
 
   return (
     <section className="py-12 px-4 bg-gradient-to-br from-purple-50/80 via-white/40 to-pink-50/60 min-h-screen">
@@ -156,77 +281,10 @@ export const AllHotels = () => {
             </button>
           </div>
         </div>
-
-        {/* Add Hotel Form */}
-        {showAddHotelForm && (
-          <form
-            onSubmit={handleAddHotel}
-            className="bg-white p-6 rounded-2xl mb-8 shadow-lg border border-purple-100/50"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-purple-900">Add New Hotel</h3>
-              <button
-                type="button"
-                onClick={() => setShowAddHotelForm(false)}
-                className="text-purple-500 hover:text-purple-700"
-              >
-                <MdClose size={20} />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-purple-700 mb-1">Hotel Name</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  value={newHotel.name}
-                  onChange={(e) => setNewHotel({ ...newHotel, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-purple-700 mb-1">Location</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  value={newHotel.location}
-                  onChange={(e) => setNewHotel({ ...newHotel, location: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-purple-700 mb-1">Rating</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  value={newHotel.rating}
-                  onChange={(e) => setNewHotel({ ...newHotel, rating: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-purple-700 mb-1">Image URL</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  value={newHotel.hotelImage}
-                  onChange={(e) => setNewHotel({ ...newHotel, hotelImage: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-6 w-full md:w-auto px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md"
-            >
-              Create Hotel
-            </button>
-          </form>
-        )}
-
+  
+        {/* ✅ Render the hotelForm variable here */}
+        {showAddHotelForm && hotelForm}
+  
         {/* Loading and Error States */}
         {error ? (
           <div className="text-center py-12 bg-white rounded-xl shadow-sm">
@@ -269,13 +327,13 @@ export const AllHotels = () => {
                     </span>
                   </div>
                 </div>
-
+  
                 {/* Hotel Info */}
                 <div className="p-5">
                   <p className="text-sm text-purple-600 mb-4">
                     {hotel.rooms?.length || 0} room type(s) available
                   </p>
-
+  
                   {/* Buttons now in a single row */}
                   <div className="flex gap-3">
                     <button
@@ -284,7 +342,7 @@ export const AllHotels = () => {
                     >
                       View Rooms
                     </button>
-
+  
                     <button
                       onClick={() => setShowAddRoomForm(showAddRoomForm === hotel.hotelId ? null : hotel.hotelId)}
                       className="flex-1 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-sm font-medium flex items-center justify-center gap-2"
@@ -302,7 +360,7 @@ export const AllHotels = () => {
                       )}
                     </button>
                   </div>
-
+  
                   {/* Add Room Form */}
                   {showAddRoomForm === hotel.hotelId && (
                     <form
@@ -402,4 +460,5 @@ export const AllHotels = () => {
       </div>
     </section>
   );
+  
 };

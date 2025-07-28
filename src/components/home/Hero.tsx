@@ -19,118 +19,139 @@ export const Hero = () => {
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Image Carousel */}
+      {/* Image Carousel with enhanced smooth transitions */}
       <div className="absolute inset-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentImage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${images[currentImage]})` }}
           >
-            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-fuchsia-800/40 to-violet-900/50"></div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Content */}
+      {/* Content with luxurious purple/pink theme */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
         <div className="max-w-4xl mx-auto space-y-8">
-          <motion.h1 
+          <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6"
+            className="mb-8"
           >
-            Discover <span className="text-gold-500">Luxury</span> Beyond Imagination
-          </motion.h1>
+            <motion.span 
+              className="text-lg font-light tracking-widest text-pink-200"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              STAYLUXE COLLECTION
+            </motion.span>
+            <motion.h1 
+              className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mt-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-purple-300 to-pink-400"
+            >
+              Where Dreams Take Residence
+            </motion.h1>
+
+          </motion.div>
           
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl max-w-2xl mx-auto font-light"
+            className="text-xl md:text-2xl max-w-2xl mx-auto font-light text-purple-100"
           >
-            Curated accommodations for the discerning traveler
+            Experience the pinnacle of luxury with our hand-selected global retreats
           </motion.p>
 
-          {/* Search Form */}
+          {/* Call to Action */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-12 w-full max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden"
+            className="mt-12 flex gap-4 justify-center"
           >
-            <form className="grid grid-cols-1 md:grid-cols-4 divide-x divide-gray-200/50">
-              <div className="p-4 md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">Destination</label>
-                <input
-                  type="text"
-                  placeholder="Where to?"
-                  className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-gold-500 bg-transparent text-gray-800"
-                />
-              </div>
-              <div className="p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">Dates</label>
-                <input
-                  type="date"
-                  className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-gold-500 bg-transparent text-gray-800"
-                />
-              </div>
-              <div className="p-0">
-                <button
-                  type="submit"
-                  className="w-full h-full bg-gray-900 hover:bg-gray-800 text-white font-medium flex items-center justify-center transition-colors"
-                >
-                  <span className="flex items-center">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    Search
-                  </span>
-                </button>
-              </div>
-            </form>
+            <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full font-medium hover:from-purple-700 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+              Explore Properties
+            </button>
+            <button className="px-8 py-3 border border-pink-300 rounded-full font-medium hover:bg-white/10 transition-all duration-300">
+              View Collections
+            </button>
           </motion.div>
         </div>
 
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        {/* Carousel Indicators - redesigned */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentImage(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${currentImage === index ? 'bg-white' : 'bg-white/50'}`}
+              className={`relative w-12 h-1 rounded-full transition-all duration-300 ${currentImage === index ? 'bg-gradient-to-r from-pink-400 to-purple-500' : 'bg-white/30'}`}
               aria-label={`Go to slide ${index + 1}`}
-            />
+            >
+              {currentImage === index && (
+                <motion.span 
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-400 to-purple-500 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 4.8, ease: 'linear' }}
+                />
+              )}
+            </button>
           ))}
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator - redesigned */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-pink-200"
         >
-          <span className="text-sm mb-1">Scroll</span>
-          <svg className="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex flex-col items-center"
+          >
+            <span className="text-xs tracking-widest mb-1">EXPLORE MORE</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </motion.div>
         </motion.div>
       </div>
 
-      {/* Animation styles */}
-      <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-bounce { animation: bounce 2s infinite; }
-      `}</style>
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {/* Glitter effect */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-pink-400 opacity-20"
+            style={{
+              width: Math.random() * 5 + 1 + 'px',
+              height: Math.random() * 5 + 1 + 'px',
+              top: Math.random() * 100 + '%',
+              left: Math.random() * 100 + '%',
+            }}
+            animate={{
+              opacity: [0, 0.3, 0],
+              scale: [1, 1.5, 1]
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 5
+            }}
+          />
+        ))}
+      </div>
     </section>
   );
 };
