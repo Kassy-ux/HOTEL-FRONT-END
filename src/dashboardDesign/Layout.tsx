@@ -20,25 +20,19 @@ export const Layout = () => {
       </div>
 
       <div className="flex">
-        {/* Sidebar */}
-        <div
-          className={`fixed lg:static top-0 left-0 z-40 h-full transition-transform duration-300 lg:translate-x-0 ${
-            showSidebar ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <SideNav />
-        </div>
+        {/* Sidebar with prop control */}
+        <SideNav isOpen={showSidebar} setIsOpen={setShowSidebar} />
 
-        {/* Overlay when sidebar is open on small screens */}
+        {/* Overlay for mobile */}
         {showSidebar && (
           <div
-            className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
             onClick={() => setShowSidebar(false)}
           />
         )}
 
-        {/* Main content */}
-        <div className="flex-1 px-2 py-4 lg:ml-64 w-full">
+        {/* Main content area */}
+        <div className="flex-1 px-2 py-4 w-full lg:ml-64">
           <Card className="w-full max-w-7xl mx-auto">
             <Outlet />
           </Card>
