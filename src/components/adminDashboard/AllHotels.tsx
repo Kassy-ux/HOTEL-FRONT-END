@@ -23,6 +23,8 @@ export const AllHotels = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploading, setUploading] = useState(false);
+  const [roomUploadProgress] = useState<number>(0);
+  const [roomUploading] = useState(false);
 
   const {
     data: hotelData = [],
@@ -116,6 +118,14 @@ export const AllHotels = () => {
     const uploadedUrl = await uploadToCloudinary(file);
     if (uploadedUrl) {
       setNewHotel((prev) => ({ ...prev, hotelImage: uploadedUrl }));
+    }
+  };
+  const handleRoomImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const uploadedUrl = await uploadToCloudinary(file);
+    if (uploadedUrl) {
+      setNewRoom((prev) => ({ ...prev, roomImage: uploadedUrl }));
     }
   };
 
@@ -367,18 +377,35 @@ export const AllHotels = () => {
                       onSubmit={(e) => handleAddRoom(e, hotel.hotelId)}
                       className="mt-4 space-y-3 bg-purple-50/50 p-4 rounded-lg"
                     >
-                      <div>
-                        <label className="block text-xs font-medium text-purple-700 mb-1">Room Type</label>
-                        <input
-                          type="text"
-                          className="w-full px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                          value={newRoom.roomType}
-                          onChange={(e) =>
-                            setNewRoom({ ...newRoom, roomType: e.target.value })
-                          }
-                          required
-                        />
-                      </div>
+                    <div>
+  <label className="block text-xs font-medium text-purple-700 mb-1">Room Image</label>
+  <input
+    type="file"
+    accept="image/*"
+    className="w-full px-3 py-2 text-sm border border-purple-200 rounded-lg bg-white"
+    onChange={handleRoomImageUpload}
+    required
+  />
+  {roomUploading && (
+    <div className="mt-2 text-xs text-purple-600">
+      Uploading: {roomUploadProgress}%
+      <div className="w-full bg-purple-100 h-2 mt-1 rounded">
+        <div
+          className="h-2 bg-purple-500 rounded"
+          style={{ width: `${roomUploadProgress}%` }}
+        />
+      </div>
+    </div>
+  )}
+  {newRoom.roomImage && (
+    <img
+      src={newRoom.roomImage}
+      alt="Uploaded Room"
+      className="mt-3 w-32 h-20 object-cover rounded"
+    />
+  )}
+</div>
+
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-xs font-medium text-purple-700 mb-1">Price</label>
