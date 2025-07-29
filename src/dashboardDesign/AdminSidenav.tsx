@@ -8,80 +8,102 @@ import {
 import { FaDollarSign, FaUsers } from "react-icons/fa";
 import { FaShop } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const AdminSideNav = () => {
   const [open, setOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // Close drawer on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Mobile Top Bar */}
       <div className="md:hidden flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
         <h2 className="text-lg font-bold text-purple-700">Admin Panel</h2>
-        <button onClick={() => setOpen(!open)} className="text-purple-700">
-          {open ? <XIcon size={24} /> : <MenuIcon size={24} />}
+        <button onClick={() => setOpen(true)} className="text-purple-700">
+          <MenuIcon size={24} />
         </button>
       </div>
 
-      {/* Sidebar Menu */}
-      <div
-        className={`${
-          open ? "block" : "hidden"
-        } md:block bg-white shadow-xl text-gray-800 min-h-screen w-full md:w-64 px-4 py-6 md:rounded-r-xl border-r border-gray-200 transition-all duration-300 z-40`}
-      >
-        {/* Title (only desktop) */}
-        <h2 className="hidden md:block text-xl font-bold text-purple-700 mb-6">
-          Admin Panel
-        </h2>
+      {/* Backdrop */}
+      {open && (
+        <div className="fixed inset-0 bg-black/30 z-40 md:hidden"></div>
+      )}
 
-        <ul className="space-y-1 text-sm font-medium">
-          <li>
-            <NavItem to="analytics" icon={<TrendingUpIcon />} text="Analytics" />
-          </li>
-          <li>
-            <NavItem to="allhotels" icon={<FaShop />} text="Hotels" />
-          </li>
-          <li>
-            <NavItem to="allbookings" icon={<FaDollarSign />} text="Bookings" />
-          </li>
-          <li>
-            <NavItem to="allusers" icon={<FaUsers />} text="All Users" />
-          </li>
-          <li>
-            <NavItem to="adminprofile" icon={<SquareUserRound />} text="My Profile" />
-          </li>
-          <li>
-            <NavItem
-              to="AllTickets"
-              icon={<Tickets className="text-red-500" />}
-              text="All Tickets"
-              color="red"
-            />
-          </li>
-          <li>
-            <NavItem
-              to="/"
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-house text-green-600"
-                >
-                  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-                  <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                </svg>
-              }
-              text="Home"
-              color="green"
-            />
-          </li>
+      {/* Sidebar Drawer */}
+      <div
+        ref={drawerRef}
+        className={`fixed z-50 top-0 left-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out
+          ${open ? "translate-x-0" : "-translate-x-full"} 
+          md:translate-x-0 md:static md:block md:rounded-r-xl md:border-r md:border-gray-200
+        `}
+      >
+        {/* Close Button for Mobile */}
+        <div className="flex items-center justify-between md:hidden px-4 py-3 border-b">
+          <h2 className="text-lg font-bold text-purple-700">Admin Panel</h2>
+          <button onClick={() => setOpen(false)}>
+            <XIcon size={24} />
+          </button>
+        </div>
+
+        {/* Sidebar Links */}
+        <ul className="space-y-1 text-sm font-medium p-4">
+          <NavItem to="analytics" icon={<TrendingUpIcon />} text="Analytics" onClick={() => setOpen(false)} />
+          <NavItem to="allhotels" icon={<FaShop />} text="Hotels" onClick={() => setOpen(false)} />
+          <NavItem to="allbookings" icon={<FaDollarSign />} text="Bookings" onClick={() => setOpen(false)} />
+          <NavItem to="allusers" icon={<FaUsers />} text="All Users" onClick={() => setOpen(false)} />
+          <NavItem to="adminprofile" icon={<SquareUserRound />} text="My Profile" onClick={() => setOpen(false)} />
+          <NavItem
+            to="AllTickets"
+            icon={<Tickets className="text-red-500" />}
+            text="All Tickets"
+            color="red"
+            onClick={() => setOpen(false)}
+          />
+          <NavItem
+            to="/"
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-house text-green-600"
+              >
+                <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+                <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              </svg>
+            }
+            text="Home"
+            color="green"
+            onClick={() => setOpen(false)}
+          />
         </ul>
       </div>
     </>
@@ -93,11 +115,13 @@ const NavItem = ({
   icon,
   text,
   color = "purple",
+  onClick,
 }: {
   to: string;
   icon: React.ReactNode;
   text: string;
   color?: "purple" | "red" | "green";
+  onClick?: () => void;
 }) => {
   const from = {
     purple: "from-purple-100",
@@ -112,12 +136,15 @@ const NavItem = ({
   }[color];
 
   return (
-    <Link
-      to={to}
-      className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r ${from} ${toColor} transition-all`}
-    >
-      <div className="text-purple-600">{icon}</div>
-      {text}
-    </Link>
+    <li>
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r ${from} ${toColor} transition-all`}
+      >
+        <div className="text-purple-600">{icon}</div>
+        {text}
+      </Link>
+    </li>
   );
 };
