@@ -1,16 +1,20 @@
-import { useEffect, useRef } from "react";
+import {
+  Home,
+  Settings,
+  SquareUserRound,
+  Tickets,
+  MenuIcon,
+  XIcon,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Settings, SquareUserRound, Tickets, X } from "lucide-react";
 
-type Props = {
-  isOpen: boolean;
-  setIsOpen: (val: boolean) => void;
-};
-
-export const SideNav = ({ isOpen, setIsOpen }: Props) => {
+export const SideNav = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const drawerRef = useRef<HTMLDivElement>(null);
 
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -24,73 +28,112 @@ export const SideNav = ({ isOpen, setIsOpen }: Props) => {
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, setIsOpen]);
+  }, [isOpen]);
 
   const isActive = (path: string) => location.pathname.includes(path);
 
   return (
-    <aside
-      ref={drawerRef}
-      className={`
-        fixed top-0 left-0 z-50 h-full w-64
-        bg-gradient-to-b from-purple-50 to-pink-50 p-5 border-r border-purple-100 shadow-md
-        transform transition-transform duration-300 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:block lg:z-0
-      `}
-    >
-      <div className="lg:hidden flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-purple-700">Dashboard</h2>
-        <button onClick={() => setIsOpen(false)}>
-          <X size={22} />
+    <>
+      {/* Toggle Button on Mobile */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 bg-white rounded shadow text-purple-700"
+        >
+          <MenuIcon />
         </button>
       </div>
 
-      <h2 className="hidden lg:block text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6">
-        Dashboard
-      </h2>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/30 z-40"></div>
+      )}
 
-      <nav className="flex flex-col space-y-4">
-        <Link
-          to="/"
-          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
-            isActive("/") ? "bg-purple-200 font-bold" : ""
-          }`}
-        >
-          <Home size={18} />
-          <span>Home</span>
-        </Link>
-        <Link
-          to="/tickets"
-          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
-            isActive("/tickets") ? "bg-purple-200 font-bold" : ""
-          }`}
-        >
-          <Tickets size={18} />
-          <span>Tickets</span>
-        </Link>
-        <Link
-          to="/profile"
-          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
-            isActive("/profile") ? "bg-purple-200 font-bold" : ""
-          }`}
-        >
-          <SquareUserRound size={18} />
-          <span>Profile</span>
-        </Link>
-        <Link
-          to="/settings"
-          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
-            isActive("/settings") ? "bg-purple-200 font-bold" : ""
-          }`}
-        >
-          <Settings size={18} />
-          <span>Settings</span>
-        </Link>
-      </nav>
-    </aside>
+      {/* Sidebar Drawer */}
+      <div
+        ref={drawerRef}
+        className={`fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-xl
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block lg:z-0 border-r`}
+      >
+        {/* Header on Mobile */}
+        <div className="lg:hidden flex justify-between items-center px-4 py-3 border-b">
+          <h2 className="text-lg font-bold text-purple-700">User Panel</h2>
+          <button onClick={() => setIsOpen(false)}>
+            <XIcon />
+          </button>
+        </div>
+
+        {/* Sidebar Content */}
+        <ul className="p-4 space-y-1 font-medium text-sm">
+          <h2 className="hidden lg:block text-xl font-bold text-purple-700 mb-4">
+            User Panel
+          </h2>
+
+          <NavItem
+            to="/"
+            icon={<Home size={20} />}
+            text="Home"
+            active={isActive("/")}
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="/tickets"
+            icon={<Tickets size={20} />}
+            text="Tickets"
+            active={isActive("/tickets")}
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="/profile"
+            icon={<SquareUserRound size={20} />}
+            text="Profile"
+            active={isActive("/profile")}
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="/settings"
+            icon={<Settings size={20} />}
+            text="Settings"
+            active={isActive("/settings")}
+            onClick={() => setIsOpen(false)}
+          />
+        </ul>
+      </div>
+    </>
+  );
+};
+
+const NavItem = ({
+  to,
+  icon,
+  text,
+  active,
+  onClick,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  text: string;
+  active?: boolean;
+  onClick?: () => void;
+}) => {
+  return (
+    <li>
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+          active
+            ? "bg-gradient-to-r from-purple-100 to-pink-100 font-semibold"
+            : "hover:bg-gradient-to-r from-purple-50 to-pink-50"
+        }`}
+      >
+        <div className="text-purple-700">{icon}</div>
+        {text}
+      </Link>
+    </li>
   );
 };
