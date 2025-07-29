@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   SquareUserRound,
   Tickets,
@@ -13,7 +13,30 @@ import { Link, useLocation } from "react-router-dom";
 
 export const SideNav = () => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false); // Start closed on mobile
+  const [isOpen, setIsOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // Detect click outside to close on mobile
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const isActive = (path: string) => location.pathname.includes(path);
 
@@ -21,92 +44,88 @@ export const SideNav = () => {
     <>
       {/* Toggle Button - Mobile Only */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-purple-600 text-white rounded-md shadow-md"
       >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
+        <Menu size={20} />
       </button>
 
-      {/* Sidebar */}
+      {/* Backdrop */}
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/30 z-40"></div>
+      )}
+
+      {/* Sidebar Drawer */}
       <aside
+        ref={drawerRef}
         className={`
-          fixed top-0 left-0 z-40 h-full w-64
+          fixed top-0 left-0 z-50 h-full w-64
           bg-gradient-to-b from-purple-50 to-pink-50 p-5 border-r border-purple-100 shadow-md
           transform transition-transform duration-300 ease-in-out
-
-          ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-          lg:translate-x-0 lg:relative lg:block
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 lg:static lg:block lg:z-0
         `}
       >
-        <div className="mb-8 pl-3">
-          <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
-            Dashboard
-          </h2>
+        {/* Header (Mobile Only) */}
+        <div className="lg:hidden flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-purple-700">Dashboard</h2>
+          <button onClick={() => setIsOpen(false)}>
+            <X size={22} />
+          </button>
         </div>
 
-        <ul className="space-y-2">
-          {[
-            {
-              to: "me",
-              icon: <SquareUserRound size={20} />,
-              label: "My Profile",
-              gradient: "from-purple-600 to-pink-600",
-              color: "text-purple-500",
-            },
-            {
-              to: "Bookings",
-              icon: <FaShop size={18} />,
-              label: "My Bookings",
-              gradient: "from-purple-600 to-pink-600",
-              color: "text-purple-500",
-            },
-            {
-              to: "payments",
-              icon: <FaDollarSign size={18} />,
-              label: "Payments",
-              gradient: "from-purple-600 to-pink-600",
-              color: "text-purple-500",
-            },
-            {
-              to: "Tickets",
-              icon: <Tickets size={20} />,
-              label: "Tickets",
-              gradient: "from-pink-600 to-rose-600",
-              color: "text-pink-500",
-            },
-            {
-              to: "/setting",
-              icon: <Settings size={20} />,
-              label: "Settings",
-              gradient: "from-teal-500 to-emerald-600",
-              color: "text-teal-500",
-            },
-          ].map(({ to, icon, label, gradient, color }) => (
-            <li key={to}>
-              <Link
-                to={to}
-                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
-                  isActive(to)
-                    ? `bg-gradient-to-r ${gradient} text-white shadow-md`
-                    : `text-purple-800 hover:bg-purple-100 hover:${color}`
-                }`}
-              >
-                <span
-                  className={`${
-                    isActive(to) ? "text-white" : color
-                  }`}
-                >
-                  {icon}
-                </span>
-                <span className="font-medium">{label}</span>
-              </Link>
-            </li>
-          ))}
+        {/* Sidebar Title */}
+        <h2 className="hidden lg:block text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6">
+          Dashboard
+        </h2>
+
+        <ul className="space-y-2 font-medium text-sm">
+          <NavItem
+            to="me"
+            icon={<SquareUserRound size={20} />}
+            text="My Profile"
+            active={isActive("me")}
+            color="purple"
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="Bookings"
+            icon={<FaShop size={18} />}
+            text="My Bookings"
+            active={isActive("Bookings")}
+            color="purple"
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="payments"
+            icon={<FaDollarSign size={18} />}
+            text="Payments"
+            active={isActive("payments")}
+            color="purple"
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="Tickets"
+            icon={<Tickets size={20} />}
+            text="Tickets"
+            active={isActive("Tickets")}
+            color="pink"
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="/setting"
+            icon={<Settings size={20} />}
+            text="Settings"
+            active={isActive("setting")}
+            color="teal"
+            onClick={() => setIsOpen(false)}
+          />
 
           {/* Back to Home */}
           <li className="pt-4 mt-4 border-t border-purple-100">
             <Link
               to="/"
+              onClick={() => setIsOpen(false)}
               className="flex items-center gap-3 p-3 rounded-xl text-purple-800 hover:bg-purple-100 hover:text-purple-700 transition-all duration-200"
             >
               <Home className="text-purple-500" size={20} />
@@ -116,5 +135,52 @@ export const SideNav = () => {
         </ul>
       </aside>
     </>
+  );
+};
+
+const NavItem = ({
+  to,
+  icon,
+  text,
+  active,
+  color = "purple",
+  onClick,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  text: string;
+  active?: boolean;
+  color?: "purple" | "pink" | "teal";
+  onClick?: () => void;
+}) => {
+  const gradientMap = {
+    purple: "from-purple-600 to-pink-600",
+    pink: "from-pink-600 to-rose-600",
+    teal: "from-teal-500 to-emerald-600",
+  };
+
+  const textColorMap = {
+    purple: "text-purple-500",
+    pink: "text-pink-500",
+    teal: "text-teal-500",
+  };
+
+  return (
+    <li>
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
+          active
+            ? `bg-gradient-to-r ${gradientMap[color]} text-white shadow-md`
+            : `text-purple-800 hover:bg-purple-100 hover:${textColorMap[color]}`
+        }`}
+      >
+        <span className={active ? "text-white" : textColorMap[color]}>
+          {icon}
+        </span>
+        <span className="font-medium">{text}</span>
+      </Link>
+    </li>
   );
 };
