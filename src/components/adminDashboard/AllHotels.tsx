@@ -405,6 +405,18 @@ export const AllHotels = () => {
     />
   )}
 </div>
+<div>
+      <label className="block text-xs font-medium text-purple-700 mb-1">Room Type</label>
+      <input
+        type="text"
+        className="w-full px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+        value={newRoom.roomType}
+        onChange={(e) =>
+          setNewRoom({ ...newRoom, roomType: e.target.value })
+        }
+        required
+      />
+    </div>
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
