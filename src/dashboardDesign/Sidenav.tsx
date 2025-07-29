@@ -1,26 +1,16 @@
 import { useEffect, useRef } from "react";
-import {
-  SquareUserRound,
-  Tickets,
-  Settings,
-  Home,
-  X,
-} from "lucide-react";
-import { FaDollarSign } from "react-icons/fa";
-import { FaShop } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
+import { Home, Settings, SquareUserRound, Tickets, X } from "lucide-react";
 
-export const SideNav = ({
-  isOpen,
-  setIsOpen,
-}: {
+type Props = {
   isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-}) => {
+  setIsOpen: (val: boolean) => void;
+};
+
+export const SideNav = ({ isOpen, setIsOpen }: Props) => {
   const location = useLocation();
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -34,7 +24,6 @@ export const SideNav = ({
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -53,7 +42,6 @@ export const SideNav = ({
         lg:translate-x-0 lg:static lg:block lg:z-0
       `}
     >
-      {/* Mobile Header */}
       <div className="lg:hidden flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold text-purple-700">Dashboard</h2>
         <button onClick={() => setIsOpen(false)}>
@@ -61,112 +49,48 @@ export const SideNav = ({
         </button>
       </div>
 
-      {/* Sidebar Title */}
       <h2 className="hidden lg:block text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6">
         Dashboard
       </h2>
 
-      <ul className="space-y-2 font-medium text-sm">
-        <NavItem
-          to="me"
-          icon={<SquareUserRound size={20} />}
-          text="My Profile"
-          active={isActive("me")}
-          color="purple"
-          onClick={() => setIsOpen(false)}
-        />
-        <NavItem
-          to="Bookings"
-          icon={<FaShop size={18} />}
-          text="My Bookings"
-          active={isActive("Bookings")}
-          color="purple"
-          onClick={() => setIsOpen(false)}
-        />
-        <NavItem
-          to="payments"
-          icon={<FaDollarSign size={18} />}
-          text="Payments"
-          active={isActive("payments")}
-          color="purple"
-          onClick={() => setIsOpen(false)}
-        />
-        <NavItem
-          to="Tickets"
-          icon={<Tickets size={20} />}
-          text="Tickets"
-          active={isActive("Tickets")}
-          color="pink"
-          onClick={() => setIsOpen(false)}
-        />
-        <NavItem
-          to="/setting"
-          icon={<Settings size={20} />}
-          text="Settings"
-          active={isActive("setting")}
-          color="teal"
-          onClick={() => setIsOpen(false)}
-        />
-
-        {/* Back to Home */}
-        <li className="pt-4 mt-4 border-t border-purple-100">
-          <Link
-            to="/me"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-xl text-purple-800 hover:bg-purple-100 hover:text-purple-700 transition-all duration-200"
-          >
-            <Home className="text-purple-500" size={20} />
-            <span className="font-medium">Back to Home</span>
-          </Link>
-        </li>
-      </ul>
+      <nav className="flex flex-col space-y-4">
+        <Link
+          to="/"
+          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
+            isActive("/") ? "bg-purple-200 font-bold" : ""
+          }`}
+        >
+          <Home size={18} />
+          <span>Home</span>
+        </Link>
+        <Link
+          to="/tickets"
+          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
+            isActive("/tickets") ? "bg-purple-200 font-bold" : ""
+          }`}
+        >
+          <Tickets size={18} />
+          <span>Tickets</span>
+        </Link>
+        <Link
+          to="/profile"
+          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
+            isActive("/profile") ? "bg-purple-200 font-bold" : ""
+          }`}
+        >
+          <SquareUserRound size={18} />
+          <span>Profile</span>
+        </Link>
+        <Link
+          to="/settings"
+          className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-purple-100 text-purple-800 ${
+            isActive("/settings") ? "bg-purple-200 font-bold" : ""
+          }`}
+        >
+          <Settings size={18} />
+          <span>Settings</span>
+        </Link>
+      </nav>
     </aside>
-  );
-};
-
-const NavItem = ({
-  to,
-  icon,
-  text,
-  active,
-  color = "purple",
-  onClick,
-}: {
-  to: string;
-  icon: React.ReactNode;
-  text: string;
-  active?: boolean;
-  color?: "purple" | "pink" | "teal";
-  onClick?: () => void;
-}) => {
-  const gradientMap = {
-    purple: "from-purple-600 to-pink-600",
-    pink: "from-pink-600 to-rose-600",
-    teal: "from-teal-500 to-emerald-600",
-  };
-
-  const textColorMap = {
-    purple: "text-purple-500",
-    pink: "text-pink-500",
-    teal: "text-teal-500",
-  };
-
-  return (
-    <li>
-      <Link
-        to={to}
-        onClick={onClick}
-        className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
-          active
-            ? `bg-gradient-to-r ${gradientMap[color]} text-white shadow-md`
-            : `text-purple-800 hover:bg-purple-100 hover:${textColorMap[color]}`
-        }`}
-      >
-        <span className={active ? "text-white" : textColorMap[color]}>
-          {icon}
-        </span>
-        <span className="font-medium">{text}</span>
-      </Link>
-    </li>
   );
 };
