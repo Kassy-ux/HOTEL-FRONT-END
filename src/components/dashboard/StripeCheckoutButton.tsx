@@ -17,7 +17,7 @@ const StripeCheckoutButton: React.FC<MyPaymentProps> = ({ bookingId, amount  }) 
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/payments/create-checkout-session', {
+      const res = await axios.post('https://stayluxe-e76y.onrender.com/api/payments/create-checkout-session', {
         bookingId,
         amount,
       });
