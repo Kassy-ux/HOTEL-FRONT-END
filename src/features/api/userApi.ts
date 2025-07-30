@@ -37,7 +37,7 @@ export const userApi = createApi({
     }),
     updateUserProfile: builder.mutation({
       query: ({ userId, ...patch }) => ({
-        url: `users/${userId}`,
+        url: `'/users/profile',`,
         method: 'PUT',
         body: patch,
       }),

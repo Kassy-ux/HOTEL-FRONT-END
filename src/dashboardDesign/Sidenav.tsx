@@ -2,9 +2,11 @@ import {
   Home,
   Settings,
   SquareUserRound,
-  Tickets,
+  Tickets as TicketIcon,
   MenuIcon,
   XIcon,
+  CreditCard,
+  BookOpen,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -81,21 +83,35 @@ export const SideNav = () => {
             onClick={() => setIsOpen(false)}
           />
           <NavItem
-            to="/tickets"
-            icon={<Tickets size={20} />}
-            text="Tickets"
-            active={isActive("/tickets")}
+            to="Bookings"
+            icon={<BookOpen size={20} />}
+            text="My Bookings"
+            active={isActive("/Bookings")}
             onClick={() => setIsOpen(false)}
           />
           <NavItem
-            to="/profile"
+            to="Tickets"
+            icon={<TicketIcon size={20} />}
+            text="Support Tickets"
+            active={isActive("/Tickets")}
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="payments"
+            icon={<CreditCard size={20} />}
+            text="Payments"
+            active={isActive("/payments")}
+            onClick={() => setIsOpen(false)}
+          />
+          <NavItem
+            to="me"
             icon={<SquareUserRound size={20} />}
-            text="Profile"
-            active={isActive("/profile")}
+            text="My Profile"
+            active={isActive("/me")}
             onClick={() => setIsOpen(false)}
           />
           <NavItem
-            to="/settings"
+            to="settings"
             icon={<Settings size={20} />}
             text="Settings"
             active={isActive("/settings")}
