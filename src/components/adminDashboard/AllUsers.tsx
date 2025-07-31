@@ -1,44 +1,48 @@
-import { FiEdit } from "react-icons/fi"
-import { userApi } from "../../features/api/userApi"
-import type { RootState } from "../../app/store"
-import { useSelector } from "react-redux"
-import { PuffLoader } from "react-spinners"
-import { useState } from "react"
-import { FaTimes } from "react-icons/fa"
-import { SaveIcon, Users, Shield, User, AlertCircle, Calendar, Mail } from "lucide-react"
-import Swal from "sweetalert2"
+import type { RootState } from "../../app/store";
+import { useSelector } from "react-redux";
+import { PuffLoader } from "react-spinners";
+import { useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import { SaveIcon, Users, Shield, User, AlertCircle } from "lucide-react";
+import { FiEdit } from "react-icons/fi";
+import Swal from "sweetalert2";
+import { userApi } from "../../features/api/userApi";
 
 interface UserDetail {
-  userId: number,
-  firstName: string
-  lastName: string
-  profileUrl: string
-  email: string,
-  role: string,
-  createdAt: string
+  userId: number;
+  firstName: string;
+  lastName: string;
+  profileUrl: string;
+  email: string;
+  role: string;
+  createdAt: string;
 }
 
 const getUserRoleBadge = (role: string) => {
   switch (role) {
-    case "admin": 
+    case "admin":
       return "bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-200";
-    case "disabled": 
+    case "disabled":
       return "bg-gradient-to-r from-red-100 to-pink-100 text-red-700 border-red-200";
-    case "user": 
+    case "user":
       return "bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200";
-    default: 
+    default:
       return "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200";
   }
-}
+};
 
 const getRoleIcon = (role: string) => {
   switch (role) {
-    case "admin": return <Shield className="w-3 h-3" />;
-    case "disabled": return <AlertCircle className="w-3 h-3" />;
-    case "user": return <User className="w-3 h-3" />;
-    default: return <User className="w-3 h-3" />;
+    case "admin":
+      return <Shield className="w-3 h-3" />;
+    case "disabled":
+      return <AlertCircle className="w-3 h-3" />;
+    case "user":
+      return <User className="w-3 h-3" />;
+    default:
+      return <User className="w-3 h-3" />;
   }
-}
+};
 
 export const AllUsers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,9 +50,12 @@ export const AllUsers = () => {
   const [selectedRole, setSelectedRole] = useState("");
 
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { data: usersData = [], isLoading: userDataIsLoading, error } = userApi.useGetAllUsersProfilesQuery({
-    skip: !isAuthenticated
-  });
+
+  // ✅ Correct query usage
+  const { data: usersData = [], isLoading: userDataIsLoading, error } =
+    userApi.useGetAllUsersProfilesQuery(undefined, {
+      skip: !isAuthenticated,
+    });
 
   const [updateUserRole, { isLoading: isUpdating }] = userApi.useUpdateUserProfileMutation();
 
@@ -70,7 +77,7 @@ export const AllUsers = () => {
         title: "Success",
         text: "User role updated successfully",
         icon: "success",
-        confirmButtonColor: "#8b5cf6"
+        confirmButtonColor: "#8b5cf6",
       });
       setIsModalOpen(false);
     } catch (err) {
@@ -79,7 +86,7 @@ export const AllUsers = () => {
         title: "Error",
         text: "Failed to update role",
         icon: "error",
-        confirmButtonColor: "#ec4899"
+        confirmButtonColor: "#ec4899",
       });
     }
   };
@@ -110,23 +117,17 @@ export const AllUsers = () => {
           <div className="p-8">
             {error ? (
               <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                  <AlertCircle className="text-red-500 w-8 h-8" />
-                </div>
+                <AlertCircle className="text-red-500 w-8 h-8 mb-4 mx-auto" />
                 <p className="text-red-600 text-lg font-medium">Error fetching users</p>
               </div>
             ) : userDataIsLoading ? (
               <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full mb-4">
-                  <PuffLoader color="#8b5cf6" size={40} />
-                </div>
+                <PuffLoader color="#8b5cf6" size={40} />
                 <p className="text-gray-600 text-lg">Loading users...</p>
               </div>
             ) : usersData.length === 0 ? (
               <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full mb-4">
-                  <Users className="text-purple-500 w-8 h-8" />
-                </div>
+                <Users className="text-purple-500 w-8 h-8 mb-4 mx-auto" />
                 <p className="text-gray-600 text-lg">No users available</p>
               </div>
             ) : (
@@ -143,45 +144,13 @@ export const AllUsers = () => {
                   </thead>
                   <tbody>
                     {usersData.map((user: UserDetail) => (
-                      <tr 
-                        key={user.userId} 
-                        className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300"
-                      >
+                      <tr key={user.userId} className="border-b border-gray-100 hover:bg-purple-50/50 transition-all">
+                        <td className="py-6 px-4">{user.userId}</td>
                         <td className="py-6 px-4">
-                          <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full">
-                            <span className="text-purple-700 font-bold text-sm">{user.userId}</span>
-                          </div>
+                          {user.firstName} {user.lastName}
                         </td>
                         <td className="py-6 px-4">
-                          <div className="flex items-center gap-4">
-                            <div className="relative">
-                              <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
-                                <img 
-                                  src={user.profileUrl} 
-                                  alt="avatar" 
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-2 border-white"></div>
-                            </div>
-                            <div>
-                              <div className="font-bold text-gray-900 text-lg">
-                                {user.firstName} {user.lastName}
-                              </div>
-                              <div className="flex items-center text-gray-500 text-sm mt-1">
-                                <Mail className="w-4 h-4 mr-1" />
-                                {user.email}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-6 px-4">
-                          <div className="flex items-center text-gray-600">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            <span className="font-medium">
-                              {new Date(user.createdAt).toLocaleDateString()}
-                            </span>
-                          </div>
+                          {new Date(user.createdAt).toLocaleDateString()}
                         </td>
                         <td className="py-6 px-4">
                           <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border ${getUserRoleBadge(user.role)}`}>
@@ -191,10 +160,10 @@ export const AllUsers = () => {
                         </td>
                         <td className="py-6 px-4">
                           <button
-                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
                             onClick={() => handleModalToggle(user)}
+                            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow"
                           >
-                            <FiEdit className="mr-2" />
+                            <FiEdit className="inline mr-2" />
                             Edit
                           </button>
                         </td>
@@ -210,65 +179,42 @@ export const AllUsers = () => {
         {/* Modal */}
         {isModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 w-full max-w-md transform transition-all duration-300 scale-100">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
               <div className="px-8 py-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-2xl">
                 <h2 className="text-2xl font-bold text-white flex items-center">
                   <Shield className="mr-3" />
                   Change User Role
                 </h2>
               </div>
-              
-              <form onSubmit={handleSubmit} className="p-8">
-                <div className="mb-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-purple-200 mr-4">
-                      <img 
-                        src={selectedUser.profileUrl} 
-                        alt="avatar" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-bold text-gray-900">
-                        {selectedUser.firstName} {selectedUser.lastName}
-                      </div>
-                      <div className="text-sm text-gray-500">{selectedUser.email}</div>
-                    </div>
-                  </div>
-                  
-                  <label htmlFor="role" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Select New Role
-                  </label>
-                  <select
-                    id="role"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white"
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    required
-                  >
-                    <option value="">Choose a role...</option>
-                    <option value="admin">🛡️ Admin</option>
-                    <option value="user">👤 User</option>
-                    <option value="disabled">⚠️ Disabled</option>
-                  </select>
-                </div>
 
-                <div className="flex gap-4">
+              <form onSubmit={handleSubmit} className="p-8">
+                <label className="block text-sm font-semibold mb-2">Select New Role</label>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="w-full px-4 py-3 border rounded-xl"
+                  required
+                >
+                  <option value="">Choose a role...</option>
+                  <option value="admin">🛡️ Admin</option>
+                  <option value="user">👤 User</option>
+                  <option value="disabled">⚠️ Disabled</option>
+                </select>
+
+                <div className="flex gap-4 mt-6">
                   <button
                     type="button"
                     onClick={() => handleModalToggle()}
-                    className="flex-1 flex items-center justify-center px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                    className="flex-1 bg-gray-500 text-white py-3 rounded-xl"
                   >
-                    <FaTimes className="mr-2" />
-                    Cancel
+                    <FaTimes className="inline mr-2" /> Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isUpdating}
+                    className="flex-1 bg-purple-500 text-white py-3 rounded-xl disabled:opacity-50"
                   >
-                    <SaveIcon className="mr-2 w-4 h-4" />
-                    {isUpdating ? 'Updating...' : 'Save Role'}
+                    <SaveIcon className="inline mr-2" /> {isUpdating ? "Updating..." : "Save Role"}
                   </button>
                 </div>
               </form>
