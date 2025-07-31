@@ -6,7 +6,6 @@ import { userApi } from "../features/api/userApi";
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from "sonner";
 import { FaUserPlus, FaPhone, FaHome, FaLock, FaEnvelope, FaSignInAlt } from "react-icons/fa";
-
 import { motion } from "framer-motion";
 
 type UserRegisterFormValues = {
@@ -20,17 +19,17 @@ type UserRegisterFormValues = {
 
 export const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<UserRegisterFormValues>();
-  const [registerUser, { isLoading }] = userApi.useRegisterUserMutation()
+  const [registerUser, { isLoading }] = userApi.useRegisterUserMutation();
   const navigate = useNavigate();
 
   const onSubmit = async (data: UserRegisterFormValues) => {
     const loadingToastId = toast.loading("Creating your account...");
     try {
-      const res = await registerUser(data).unwrap()
+      const res = await registerUser(data).unwrap();
       toast.success("Account created successfully!", { 
         id: loadingToastId,
         description: "You can now log in to your account"
-      
+        
       });
       console.log(res)
       navigate('/login', { 
@@ -49,12 +48,12 @@ export const Register = () => {
     <>
       <Toaster richColors position="top-right" />
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 flex items-center justify-center py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-pink-100 flex items-center justify-center py-10 px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="grid sm:grid-cols-2 gap-0 bg-white rounded-3xl shadow-xl overflow-hidden w-full max-w-6xl"
+          className="grid sm:grid-cols-2 gap-0 bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl"
         >
           {/* Form Section */}
           <div className="flex items-center justify-center p-8 sm:p-12">
@@ -63,7 +62,7 @@ export const Register = () => {
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-indigo-600 mb-2 flex items-center justify-center gap-2">
+                <h1 className="text-4xl font-bold text-pink-600 mb-2 flex items-center justify-center gap-2">
                   <FaUserPlus className="inline-block" />
                   Create Account
                 </h1>
@@ -81,14 +80,14 @@ export const Register = () => {
                       <FaUserPlus className="text-gray-400" />
                     </div>
                     <input
-                      className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                      className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                       type="text"
                       placeholder="John"
                       {...register("firstName", { required: "First name is required" })}
                     />
                   </div>
                   {errors.firstName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+                    <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>
                   )}
                 </div>
 
@@ -101,14 +100,14 @@ export const Register = () => {
                       <FaUserPlus className="text-gray-400" />
                     </div>
                     <input
-                      className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                      className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                       type="text"
                       placeholder="Doe"
                       {...register("lastName", { required: "Last name is required" })}
                     />
                   </div>
                   {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+                    <p className="mt-1 text-sm text-red-500">{errors.lastName.message}</p>
                   )}
                 </div>
               </div>
@@ -123,7 +122,7 @@ export const Register = () => {
                     <FaEnvelope className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="email"
                     placeholder="john@example.com"
                     {...register("email", { 
@@ -136,7 +135,7 @@ export const Register = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
@@ -150,7 +149,7 @@ export const Register = () => {
                     <FaLock className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="password"
                     placeholder="••••••••"
                     {...register("password", { 
@@ -163,7 +162,7 @@ export const Register = () => {
                   />
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
 
@@ -177,7 +176,7 @@ export const Register = () => {
                     <FaPhone className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="tel"
                     placeholder="+1 (555) 123-4567"
                     {...register("contactPhone")}
@@ -195,7 +194,7 @@ export const Register = () => {
                     <FaHome className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="text"
                     placeholder="123 Main St, City, Country"
                     {...register("address")}
@@ -208,7 +207,7 @@ export const Register = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition flex items-center justify-center gap-2"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -231,7 +230,7 @@ export const Register = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center mt-6 text-sm">
                 <Link 
                   to="/login" 
-                  className="text-indigo-600 hover:text-indigo-800 hover:underline flex items-center gap-1 mb-2 sm:mb-0"
+                  className="text-pink-600 hover:text-pink-800 hover:underline flex items-center gap-1 mb-2 sm:mb-0"
                 >
                   <FaSignInAlt />
                   Already have an account? Login
@@ -246,12 +245,12 @@ export const Register = () => {
             </form>
           </div>
 
-          {/* Image Section */}
-          <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 relative overflow-hidden">
-            <div className="absolute inset-0 bg-indigo-500 opacity-10"></div>
+          {/* Image Section (unchanged) */}
+          <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden">
+            <div className="absolute inset-0 bg-pink-400 opacity-10"></div>
             <div className="relative z-10 p-8 w-full h-full flex items-center justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=720&q=80" 
+                src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=720&q=80" 
                 alt="Registration" 
                 className="rounded-xl shadow-lg object-cover w-full h-full"
               />

@@ -23,14 +23,9 @@ export const Login = () => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<UserLoginFormValues>();
   const [loginUser, { isLoading }] = userApi.useLoginUserMutation();
 
-  // Pre-fill form if coming from registration
   useEffect(() => {
-    if (location.state?.email) {
-      setValue('email', location.state.email);
-    }
-    if (location.state?.password) {
-      setValue('password', location.state.password);
-    }
+    if (location.state?.email) setValue('email', location.state.email);
+    if (location.state?.password) setValue('password', location.state.password);
   }, [location.state, setValue]);
 
   const onSubmit = async (data: UserLoginFormValues) => {
@@ -38,17 +33,9 @@ export const Login = () => {
     try {
       const res = await loginUser(data).unwrap();
       dispatch(setCredentials(res));
-      toast.success("Login successful!", { 
-        id: loadingToastId,
-        description: "Welcome back!"
-      });
-      
-      // Redirect based on user type
-      if (res.role === "admin") {
-        navigate("/admindashboard/analytics");
-      } else {
-        navigate("/dashboard/me");
-      }
+      toast.success("Login successful!", { id: loadingToastId, description: "Welcome back!" });
+      if (res.role === "admin") navigate("/admindashboard/analytics");
+      else navigate("/dashboard/me");
     } catch (err: any) {
       toast.error('Login failed', { 
         id: loadingToastId,
@@ -61,21 +48,18 @@ export const Login = () => {
     <>
       <Toaster richColors position="top-right" />
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 flex items-center justify-center py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-pink-100 flex items-center justify-center py-10 px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="grid sm:grid-cols-2 gap-0 bg-white rounded-3xl shadow-xl overflow-hidden w-full max-w-6xl"
+          className="grid sm:grid-cols-2 gap-0 bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl"
         >
           {/* Form Section */}
           <div className="flex items-center justify-center p-8 sm:p-12">
-            <form 
-              className="w-full max-w-md space-y-6"
-              onSubmit={handleSubmit(onSubmit)}
-            >
+            <form className="w-full max-w-md space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-indigo-600 mb-2 flex items-center justify-center gap-2">
+                <h1 className="text-4xl font-bold text-pink-600 mb-2 flex items-center justify-center gap-2">
                   <FaSignInAlt className="inline-block" />
                   Welcome Back
                 </h1>
@@ -84,15 +68,13 @@ export const Login = () => {
 
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FaEnvelope className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="email"
                     placeholder="john@example.com"
                     {...register("email", { 
@@ -105,21 +87,19 @@ export const Login = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
               {/* Password Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FaLock className="text-gray-400" />
                   </div>
                   <input
-                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
                     type="password"
                     placeholder="••••••••"
                     {...register("password", { 
@@ -132,12 +112,12 @@ export const Login = () => {
                   />
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
                 )}
                 <div className="text-right mt-1">
                   <Link 
                     to="/forgot-password" 
-                    className="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+                    className="text-sm text-pink-600 hover:text-pink-800 hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -149,7 +129,7 @@ export const Login = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition flex items-center justify-center gap-2"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -174,7 +154,7 @@ export const Login = () => {
                   Don't have an account?{' '}
                   <Link 
                     to="/register" 
-                    className="text-indigo-600 hover:text-indigo-800 hover:underline"
+                    className="text-pink-600 hover:text-pink-800 hover:underline"
                   >
                     Sign up
                   </Link>
@@ -184,11 +164,12 @@ export const Login = () => {
           </div>
 
           {/* Image Section */}
-          <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 relative overflow-hidden">
-            <div className="absolute inset-0 bg-indigo-500 opacity-10"></div>
+          <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden">
+            <div className="absolute inset-0 bg-pink-400 opacity-10"></div>
             <div className="relative z-10 p-8 w-full h-full flex items-center justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=720&q=80" 
+                src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+
                 alt="Login" 
                 className="rounded-xl shadow-lg object-cover w-full h-full"
               />
